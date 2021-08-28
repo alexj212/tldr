@@ -21,12 +21,12 @@ export COMPILE_LDFLAGS=-s -X "main.BuildDate=${DATE}" \
                           -X "main.GitCommit=${LATEST_COMMIT}" \
                           -X "main.GitVersion=${GIT_VERSION}" \
 						  -X "main.Version=${VERSION}" \
-                          -X "main.BuiltOnIp=${BUILT_ON_IP}" \
+                          -X "main.BuiltOnIP=${BUILT_ON_IP}" \
                           -X "main.BuiltOnOs=${BUILT_ON_OS}"
 
 
 
-build_info: check_prereq ## Build the container
+build_info: ## Display build info
 	@echo ''
 	@echo '---------------------------------------------------------'
 	@echo 'BUILT_ON_IP       $(BUILT_ON_IP)'
@@ -35,7 +35,6 @@ build_info: check_prereq ## Build the container
 	@echo 'LATEST_COMMIT     $(LATEST_COMMIT)'
 	@echo 'BRANCH            $(BRANCH)'
 	@echo 'COMMIT_CNT        $(COMMIT_CNT)'
-	@echo 'BUILD_NUMBER      $(BUILD_NUMBER)'
 	@echo 'COMPILE_LDFLAGS   $(COMPILE_LDFLAGS)'
 	@echo 'PATH              $(PATH)'
 	@echo '---------------------------------------------------------'
@@ -76,9 +75,12 @@ lint: ## run golint on the project
 
 
 gocyclo: ## run gocyclo on the project
-	@ gocyclo -avg -over 15 $(shell find . -name "*.go" |egrep -v "pb\.go|_test\.go")
+	@ gocyclo -avg -over 35 $(shell find . -name "*.go" |egrep -v "pb\.go|_test\.go")
 
-check: lint vet gocyclo ## run code checks on the project
+ineffassign: ## run ineffassign on the project
+	ineffassign ./...
+
+check: lint vet ineffassign gocyclo ## run code checks on the project
 
 doc: ## run godoc
 	godoc -http=:6060
@@ -108,4 +110,6 @@ build_app: create_dir
 
 
 
-
+install:  build_app ## intall binary into ~/bin/ directory
+	@mkdir -p ~/bin/
+	cp ./bin/tldr ~/bin/

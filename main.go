@@ -161,17 +161,7 @@ func mainCall(cmd *cobra.Command, args []string) {
 	}
 
 	if list {
-		tldrs := getCachedCommandList()
-		for i, tldr := range tldrs {
-			fmt.Printf("%s\t\t", tldr)
-			if i%5 == 0 {
-				fmt.Printf("\n")
-			}
-		}
-		fmt.Printf("\n")
-
-		fmt.Printf("---------------------\n")
-		fmt.Printf("%q\n", getLocalCommandList())
+		showAvailableTldrs()
 		return
 	}
 
@@ -249,4 +239,19 @@ func displayBuildInfo() {
 	fmt.Println("BuiltOnOs  : ", BuiltOnOs)
 	fmt.Println("GoVersion  : ", GoVersion)
 	fmt.Println("OsArch     : ", OsArch)
+}
+
+func showAvailableTldrs() {
+	tldrs := getCachedCommandList()
+	for i, tldr := range tldrs {
+		fmt.Printf("%s\t\t", tldr)
+		if i%5 == 0 {
+			fmt.Printf("\n")
+		}
+	}
+	fmt.Printf("\n")
+
+	fmt.Printf("---------------------\n")
+	fmt.Printf("%q\n", getLocalCommandList())
+
 }
