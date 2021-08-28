@@ -1,4 +1,4 @@
-[![License](https://img.shields.io/badge/License-Apache%203.0-blue.svg)](https://opensource.org/licenses/Apache-3.0) [![GoDoc](https://godoc.org/github.com/smallnest/gen?status.png)](http://godoc.org/github.com/smallnest/gen)  [![travis](https://travis-ci.org/smallnest/gen.svg?branch=master)](https://travis-ci.org/smallnest/gen) [![Go Report Card](https://goreportcard.com/badge/github.com/smallnest/gen)](https://goreportcard.com/report/github.com/smallnest/gen)
+[![License](https://img.shields.io/badge/License-Apache%203.0-blue.svg)](https://opensource.org/licenses/Apache-3.0) [![GoDoc](https://godoc.org/github.com/alexj212/tldr?status.png)](http://godoc.org/github.com/alexj212/tldr)  [![travis](https://travis-ci.org/alexj212/tldr.svg?branch=master)](https://travis-ci.org/alexj212/tldr) [![Go Report Card](https://goreportcard.com/badge/github.com/alexj212/tldr)](https://goreportcard.com/report/github.com/alexj212/tldr)
 
 
 
