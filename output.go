@@ -8,16 +8,22 @@ import (
 )
 
 const (
+	// LeadingSpaceNum is how many spaches before output
 	LeadingSpaceNum = 2
 )
 
 var (
+	// WhiteBoldString predefined color
 	WhiteBoldString = color.New(color.FgWhite, color.Bold).SprintFunc()
-	WhiteString     = color.WhiteString
-	GreenString     = color.GreenString
-	RedString       = color.RedString
-	GrayString      = color.New(color.FgWhite, color.Faint).SprintfFunc()
-
+	// WhiteString predefined color
+	WhiteString = color.WhiteString
+	// GreenString predefined color
+	GreenString = color.GreenString
+	// RedString predefined color
+	RedString = color.RedString
+	// GrayString predefined color
+	GrayString = color.New(color.FgWhite, color.Faint).SprintfFunc()
+	// LeadingSpace predefined string
 	LeadingSpace = strings.Repeat(" ", LeadingSpaceNum)
 )
 

@@ -8,10 +8,10 @@ import (
 	"github.com/spf13/cobra"
 )
 
-type Config struct {
-	Platform *string
-	Language *string
-}
+var (
+	platform string
+	language string
+)
 
 func main() {
 
@@ -70,10 +70,10 @@ var rootCmd = &cobra.Command{
 	Use:   "tldr",
 	Short: "command line client for tldr",
 	Long:  "command line client for tldr written in go",
-	Run:   main_call,
+	Run:   mainCall,
 }
 
-func main_call(cmd *cobra.Command, args []string) {
+func mainCall(cmd *cobra.Command, args []string) {
 	// Print version
 	v, err := cmd.Flags().GetBool("version")
 	if err != nil {
@@ -81,12 +81,12 @@ func main_call(cmd *cobra.Command, args []string) {
 	}
 
 	// Build config
-	platform, err := cmd.Flags().GetString("platform")
+	platform, err = cmd.Flags().GetString("platform")
 	if err != nil {
 		log.Fatal(err.Error())
 	}
 
-	language, err := cmd.Flags().GetString("language")
+	language, err = cmd.Flags().GetString("language")
 	if err != nil {
 		log.Fatal(err.Error())
 	}
@@ -96,39 +96,34 @@ func main_call(cmd *cobra.Command, args []string) {
 		log.Fatal(err.Error())
 	}
 
-	hide_custom, err := cmd.Flags().GetBool("hide_custom")
+	hideCustom, err := cmd.Flags().GetBool("hide_custom")
 	if err != nil {
 		log.Fatal(err.Error())
 	}
 
-	hide_official, err := cmd.Flags().GetBool("hide_official")
+	hideOfficial, err := cmd.Flags().GetBool("hide_official")
 	if err != nil {
 		log.Fatal(err.Error())
 	}
 
-	hide_cache_age, err := cmd.Flags().GetBool("hide_cache_age")
+	hideCacheAge, err := cmd.Flags().GetBool("hide_cache_age")
 	if err != nil {
 		log.Fatal(err.Error())
 	}
 
-	hide_cache_age_warning, err := cmd.Flags().GetBool("hide_cache_age_warning")
+	hideCacheAgeWarning, err := cmd.Flags().GetBool("hide_cache_age_warning")
 	if err != nil {
 		log.Fatal(err.Error())
 	}
 
-	show_cache_details, err := cmd.Flags().GetBool("show_cache_details")
+	showCacheDetails, err := cmd.Flags().GetBool("show_cache_details")
 	if err != nil {
 		log.Fatal(err.Error())
 	}
 
-	show_build_info, err := cmd.Flags().GetBool("show_build_info")
+	showBuildInfo, err := cmd.Flags().GetBool("show_build_info")
 	if err != nil {
 		log.Fatal(err.Error())
-	}
-
-	cfg := &Config{
-		Platform: &platform,
-		Language: &language,
 	}
 
 	pageDir := getCachePath() + "/tldr-main/pages/"
@@ -149,7 +144,7 @@ func main_call(cmd *cobra.Command, args []string) {
 		return
 	}
 
-	if show_build_info {
+	if showBuildInfo {
 		displayBuildInfo()
 		return
 	}
@@ -166,7 +161,7 @@ func main_call(cmd *cobra.Command, args []string) {
 	}
 
 	if list {
-		tldrs := getCachedCommandList(cfg)
+		tldrs := getCachedCommandList()
 		for i, tldr := range tldrs {
 			fmt.Printf("%s\t\t", tldr)
 			if i%5 == 0 {
@@ -185,14 +180,14 @@ func main_call(cmd *cobra.Command, args []string) {
 		return
 	}
 
-	if !hide_cache_age {
+	if !hideCacheAge {
 
 		age := time.Since(modifiedtime)
 
 		fmt.Println("Last modified time : ", modifiedtime.Local())
 		fmt.Println("Cache age          : ", humanizeDuration(age))
 
-		if !hide_cache_age_warning {
+		if !hideCacheAgeWarning {
 
 			if age.Hours() > 7*24 {
 				fmt.Println("Local cache is older than 7 days - run command with -u option to update")
@@ -205,13 +200,13 @@ func main_call(cmd *cobra.Command, args []string) {
 
 	found := false
 	// check custom location first
-	if !hide_custom {
+	if !hideCustom {
 		pageLoc, page, err := checkCustom(command)
 		if err != nil {
 			log.Fatal(err)
 		}
 		if len(page) > 0 {
-			if show_cache_details {
+			if showCacheDetails {
 				fmt.Println(GrayString("[custom - " + pageLoc + " ]"))
 			} else {
 				fmt.Println(GrayString("[custom]"))
@@ -223,13 +218,13 @@ func main_call(cmd *cobra.Command, args []string) {
 	}
 
 	// Get page from local folder
-	if !hide_official {
-		pageLoc, page, err := checkLocalCache(cfg, command)
+	if !hideOfficial {
+		pageLoc, page, err := checkLocalCache(command)
 		if err != nil {
 			log.Fatal(err)
 		}
 		if len(page) > 0 {
-			if show_cache_details {
+			if showCacheDetails {
 				fmt.Println(GrayString("[local - " + pageLoc + " ]"))
 			} else {
 				fmt.Println(GrayString("[local]"))
@@ -250,7 +245,7 @@ func displayBuildInfo() {
 	fmt.Println("GitVersion : ", GitVersion)
 	fmt.Println("Version    : ", Version)
 	fmt.Println("BuildDate  : ", BuildDate)
-	fmt.Println("BuiltOnIp  : ", BuiltOnIp)
+	fmt.Println("BuiltOnIP  : ", BuiltOnIP)
 	fmt.Println("BuiltOnOs  : ", BuiltOnOs)
 	fmt.Println("GoVersion  : ", GoVersion)
 	fmt.Println("OsArch     : ", OsArch)

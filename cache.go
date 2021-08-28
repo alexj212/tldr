@@ -1,7 +1,6 @@
 package main
 
 import (
-	"errors"
 	"fmt"
 	"io/ioutil"
 	"math"
@@ -11,12 +10,10 @@ import (
 )
 
 const (
+	// CachePath location of cache of tldr archive and pages.
 	CachePath = ".cache/tldr"
-	tldrURL   = "https://codeload.github.com/tldr-pages/tldr/zip/refs/heads/main"
-)
-
-var (
-	ErrorCacheNotExists = errors.New("cache doesn't exists")
+	// tldrURL location to download main archive of tldr pages.
+	tldrURL = "https://codeload.github.com/tldr-pages/tldr/zip/refs/heads/main"
 )
 
 func getCustomPath() (path string) {
@@ -65,15 +62,15 @@ func updateCache() (err error) {
 	return nil
 }
 
-func checkLocalCache(cfg *Config, name string) (tldrFile string, page []string, err error) {
-	platforms := []string{PlatformCommon, *cfg.Platform}
+func checkLocalCache(name string) (tldrFile string, page []string, err error) {
+	platforms := []string{PlatformCommon, platform}
 	tldrFile = ""
 
 	// Check file for all platforms
-	for _, platform := range platforms {
+	for _, platf := range platforms {
 		// Build path to the local pages
-		langFile := buildLocalPath(*cfg.Language, platform) + name + ".md"
-		enFile := buildLocalPath("", platform) + name + ".md"
+		langFile := buildLocalPath(language, platf) + name + ".md"
+		enFile := buildLocalPath("", platf) + name + ".md"
 
 		if isFileExists(langFile) {
 			tldrFile = langFile
@@ -98,12 +95,12 @@ func checkLocalCache(cfg *Config, name string) (tldrFile string, page []string, 
 
 // *cfg.Language
 
-func buildLocalPath(lang, platform string) (dir string) {
+func buildLocalPath(lang, platf string) (dir string) {
 
 	if lang != "en" && lang != "" {
-		dir = getCachePath() + "/tldr-main/pages." + lang + "/" + platform + "/"
+		dir = getCachePath() + "/tldr-main/pages." + lang + "/" + platf + "/"
 	} else {
-		dir = getCachePath() + "/tldr-main/pages/" + platform + "/"
+		dir = getCachePath() + "/tldr-main/pages/" + platf + "/"
 	}
 	return
 }

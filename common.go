@@ -2,7 +2,6 @@ package main
 
 import (
 	"archive/zip"
-	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -12,6 +11,7 @@ import (
 )
 
 const (
+	// PlatformCommon is the name of common pages available across platforms.
 	PlatformCommon = "common"
 )
 
@@ -90,11 +90,4 @@ func getHomeDir() (homeDir string, err error) {
 	}
 	homeDir = usr.HomeDir
 	return
-}
-
-func printProgress(current, total int) {
-	fmt.Printf("\r%d / %d", current, total)
-	if current == total {
-		fmt.Println()
-	}
 }

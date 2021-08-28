@@ -7,11 +7,11 @@ import (
 	"strings"
 )
 
-func getCachedCommandList(cfg *Config) (commands []string) {
-	platforms := []string{PlatformCommon, *cfg.Platform}
+func getCachedCommandList() (commands []string) {
+	platforms := []string{PlatformCommon, platform}
 
 	for _, platform := range platforms {
-		path := buildLocalPath(*cfg.Language, platform)
+		path := buildLocalPath(language, platform)
 		if !isFileExists(path) {
 			return
 		}

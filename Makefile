@@ -67,27 +67,18 @@ vet: ## run go vet on the project
 	go vet .
 
 tools: ## install dependent tools
-	go get -u honnef.co/go/tools/cmd/staticcheck
-	go get -u honnef.co/go/tools/cmd/gosimple
-	go get -u honnef.co/go/tools/cmd/unused
-	go get -u github.com/gordonklaus/ineffassign
-	go get -u github.com/fzipp/gocyclo
-	go get -u github.com/golang/lint/golint
+	go install github.com/gordonklaus/ineffassign
+	go install github.com/fzipp/gocyclo
+	go install golang.org/x/lint/golint
 
 lint: ## run golint on the project
 	golint ./...
 
-staticcheck: ## run staticcheck on the project
-	staticcheck -ignore "$(shell cat .checkignore)" .
-
-gosimple: ## run gosimple on the project
-	# gosimple -ignore "$(shell cat .gosimpleignore)" .
-	gosimple .
 
 gocyclo: ## run gocyclo on the project
 	@ gocyclo -avg -over 15 $(shell find . -name "*.go" |egrep -v "pb\.go|_test\.go")
 
-check: staticcheck gosimple unused gocyclo ## run code checks on the project
+check: lint vet gocyclo ## run code checks on the project
 
 doc: ## run godoc
 	godoc -http=:6060
@@ -98,7 +89,6 @@ deps:## analyze project deps
 fmt: ## run fmt on the project
 	## go fmt .
 	gofmt -s -d -w -l .
-
 
 
 ####################################################################################################################

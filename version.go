@@ -17,8 +17,8 @@ var GitVersion = ""
 // BuildDate returns the date the binary was built
 var BuildDate = ""
 
-// BuiltOnIp returns the ip the binary was built on
-var BuiltOnIp = ""
+// BuiltOnIP returns the ip the binary was built on
+var BuiltOnIP = ""
 
 // BuiltOnOs returns the os that built the binary
 var BuiltOnOs = ""
