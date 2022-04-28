@@ -92,15 +92,14 @@ fmt: ## run fmt on the project
 	## go fmt .
 	gofmt -s -d -w -l .
 
-
 ####################################################################################################################
 ##
 ## Build of binaries
 ##
 ####################################################################################################################
-all: build_app ## build example and run tests
+all: build_app ## build and run tests
 
-binaries: example ## build binaries in bin dir
+binaries: build_app ## build binaries in bin dir
 
 create_dir:
 	@mkdir -p $(BIN_DIR)

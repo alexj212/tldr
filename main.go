@@ -2,9 +2,12 @@ package main
 
 import (
 	"fmt"
-	"log"
+	"os"
+	"os/exec"
+	"runtime"
 	"time"
 
+	"github.com/fatih/color"
 	"github.com/spf13/cobra"
 )
 
@@ -29,6 +32,8 @@ func main() {
 	rootCmd.Flags().BoolP("hide_cache_age_warning", "w", false, "Hide cachee age warning when older than 7 days")
 	rootCmd.Flags().BoolP("show_cache_details", "d", false, "Show cache location details")
 	rootCmd.Flags().BoolP("show_build_info", "b", false, "Show build information")
+	rootCmd.Flags().BoolP("no-color", "n", false, "Disable color output")
+	rootCmd.Flags().BoolP("edit", "e", false, "Edit custom tldr document")
 
 	rootCmd.SetUsageTemplate(`Usage:{{if .Runnable}}
 	{{.UseLine}} <tldr to lookup> {{end}}{{if .HasAvailableSubCommands}}
@@ -60,6 +65,7 @@ func main() {
 		origHelpFunc(cmd, args)
 		fmt.Println("")
 		displayBuildInfo()
+		displayCacheInfo()
 	})
 
 	// Setup
@@ -74,56 +80,78 @@ var rootCmd = &cobra.Command{
 }
 
 func mainCall(cmd *cobra.Command, args []string) {
+
+	// Disable color if cmd line set
+	flagNoColor, err := cmd.Flags().GetBool("no-color")
+	if err != nil {
+		fmt.Println(err.Error())
+		return
+	}
+
+	if flagNoColor {
+		color.NoColor = true // disables colorized output
+	}
+
 	// Print version
 	v, err := cmd.Flags().GetBool("version")
 	if err != nil {
-		log.Fatal(err.Error())
+		fmt.Println(err.Error())
+		return
 	}
 
 	// Build config
 	platform, err = cmd.Flags().GetString("platform")
 	if err != nil {
-		log.Fatal(err.Error())
+		fmt.Println(err.Error())
+		return
 	}
 
 	language, err = cmd.Flags().GetString("language")
 	if err != nil {
-		log.Fatal(err.Error())
+		fmt.Println(err.Error())
+		return
 	}
 	// Update cache
 	update, err := cmd.Flags().GetBool("update_cache")
 	if err != nil {
-		log.Fatal(err.Error())
+		fmt.Println(err.Error())
+		return
 	}
 
 	hideCustom, err := cmd.Flags().GetBool("hide_custom")
 	if err != nil {
-		log.Fatal(err.Error())
+		fmt.Println(err.Error())
+		return
 	}
 
 	hideOfficial, err := cmd.Flags().GetBool("hide_official")
 	if err != nil {
-		log.Fatal(err.Error())
+		fmt.Println(err.Error())
+		return
 	}
 
 	hideCacheAge, err := cmd.Flags().GetBool("hide_cache_age")
 	if err != nil {
-		log.Fatal(err.Error())
+		fmt.Println(err.Error())
+		return
 	}
 
 	hideCacheAgeWarning, err := cmd.Flags().GetBool("hide_cache_age_warning")
 	if err != nil {
-		log.Fatal(err.Error())
+		fmt.Println(err.Error())
+		return
 	}
 
 	showCacheDetails, err := cmd.Flags().GetBool("show_cache_details")
 	if err != nil {
-		log.Fatal(err.Error())
+		fmt.Println(err.Error())
+		return
 	}
 
 	showBuildInfo, err := cmd.Flags().GetBool("show_build_info")
 	if err != nil {
-		log.Fatal(err.Error())
+		fmt.Println(err.Error())
+		return
 	}
 
 	pageDir := getCachePath() + "/tldr-main/pages/"
@@ -132,7 +160,7 @@ func mainCall(cmd *cobra.Command, args []string) {
 	if !pageDirExists || update {
 
 		if err = updateCache(); err != nil {
-			fmt.Println("Cache faild updated ，err:", err.Error())
+			ErrorOutput.Printf("Cache faild updated ，err: %s\n", err.Error())
 			return
 		}
 		fmt.Println("Cache successfully updated")
@@ -140,9 +168,17 @@ func mainCall(cmd *cobra.Command, args []string) {
 
 	available, modifiedtime := getCacheAge()
 	if !available {
-		fmt.Printf("Cache is not available - please check %s", getCachePath())
+		ErrorOutput.Printf("Cache is not available - please check %s\n", getCachePath())
 		return
 	}
+
+	edit, err := cmd.Flags().GetBool("edit")
+	if err != nil {
+		fmt.Println(err.Error())
+		return
+	}
+
+
 
 	if showBuildInfo {
 		displayBuildInfo()
@@ -157,7 +193,9 @@ func mainCall(cmd *cobra.Command, args []string) {
 	// Print list of available commands
 	list, err := cmd.Flags().GetBool("list")
 	if err != nil {
-		log.Fatal(err.Error())
+		fmt.Println(err.Error())
+		return
+
 	}
 
 	if list {
@@ -180,7 +218,7 @@ func mainCall(cmd *cobra.Command, args []string) {
 		if !hideCacheAgeWarning {
 
 			if age.Hours() > 7*24 {
-				fmt.Println("Local cache is older than 7 days - run command with -u option to update")
+				ErrorOutput.Printf("Local cache is older than 7 days - run command with -u option to update\n")
 			}
 		}
 	}
@@ -188,12 +226,22 @@ func mainCall(cmd *cobra.Command, args []string) {
 	// Get command name
 	command := args[0]
 
+	if edit {
+		filename := buildCustomPath(command)
+		fmt.Printf("Edit custom doc: %s - %s\n", command, filename)
+		editFile(filename)
+		return
+	}
+
+
+
 	found := false
 	// check custom location first
 	if !hideCustom {
 		pageLoc, page, err := checkCustom(command)
 		if err != nil {
-			log.Fatal(err)
+			fmt.Println(err.Error())
+			return
 		}
 		if len(page) > 0 {
 			if showCacheDetails {
@@ -211,7 +259,8 @@ func mainCall(cmd *cobra.Command, args []string) {
 	if !hideOfficial {
 		pageLoc, page, err := checkLocalCache(command)
 		if err != nil {
-			log.Fatal(err)
+			fmt.Println(err)
+			return
 		}
 		if len(page) > 0 {
 			if showCacheDetails {
@@ -241,6 +290,18 @@ func displayBuildInfo() {
 	fmt.Println("OsArch     : ", OsArch)
 }
 
+func displayCacheInfo() {
+	available, modifiedtime := getCacheAge()
+	if !available {
+		ErrorOutput.Printf("Cache is not available - please check %s\n", getCachePath())
+		return
+	}
+	age := time.Since(modifiedtime)
+	ErrorOutput.Printf("Last modified time : %s\n", modifiedtime.Local())
+	ErrorOutput.Printf("Cache age          : %s\n", humanizeDuration(age))
+
+}
+
 func showAvailableTldrs() {
 	tldrs := getCachedCommandList()
 	for i, tldr := range tldrs {
@@ -254,4 +315,32 @@ func showAvailableTldrs() {
 	fmt.Printf("---------------------\n")
 	fmt.Printf("%q\n", getLocalCommandList())
 
+}
+
+
+func editFile(filename string) {
+
+	var editor string
+
+	switch runtime.GOOS {
+	case  "linux", "darwin":
+		editor = os.Getenv("EDITOR")
+		if editor == "" {
+			editor = "vi"
+		}
+		break
+
+	case "windows":
+		editor = "notepad"
+	default:
+		editor = "vi"
+	}
+
+	cmd := exec.Command(editor, filename)
+	cmd.Stdin = os.Stdin
+	cmd.Stdout = os.Stdout
+	err := cmd.Run()
+	if err != nil {
+		fmt.Println(err)
+	}
 }

@@ -12,12 +12,14 @@ import (
 const (
 	// CachePath location of cache of tldr archive and pages.
 	CachePath = ".cache/tldr"
+	// ConfigPath location of local tldr config and local pages.
+	ConfigPath = ".config/tldr"
 	// tldrURL location to download main archive of tldr pages.
 	tldrURL = "https://codeload.github.com/tldr-pages/tldr/zip/refs/heads/main"
 )
 
 func getCustomPath() (path string) {
-	return getCachePath() + "/custom/"
+	return getConfigPath() + "/custom/"
 }
 
 func getOfficalPath() (path string) {
@@ -32,6 +34,18 @@ func getCachePath() (path string) {
 	}
 
 	path = homeDir + "/" + CachePath
+
+	return path
+}
+
+func getConfigPath() (path string) {
+
+	homeDir, err := getHomeDir()
+	if err != nil {
+		return
+	}
+
+	path = homeDir + "/" + ConfigPath
 
 	return path
 }
@@ -106,7 +120,7 @@ func buildLocalPath(lang, platf string) (dir string) {
 }
 
 func buildCustomPath(name string) (file string) {
-	file = getCachePath() + "/custom/" + name + ".md"
+	file = getCustomPath() + name + ".md"
 	return
 }
 

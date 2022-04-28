@@ -29,7 +29,7 @@ func getCachedCommandList() (commands []string) {
 
 func getLocalCommandList() (commands []string) {
 
-	customPath := getCachePath() + "/custom/"
+	customPath := getCustomPath()
 
 	if !isFileExists(customPath) {
 		return

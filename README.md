@@ -14,7 +14,7 @@ This tldr client, will download and install the initial cache of tldr pages from
  
  The archive is unpacked to ```~/.cache/tldr/tldr-main/```. 
  
- This implementation allows for local pages to be stored in ```~/.cache/tldr/custom```. 
+ This implementation allows for local pages to be stored in ```~/.config/tldr/custom```. 
  <br>
  
  These pages will be available to be displayed along with the official repo pages. Options are provided to allow for hiding the custom or official pages. Options are also provided to update the local cache from the official repo pages. The binary will let you know of the cache of tldr pages is older than 7 days. 

@@ -2,8 +2,8 @@ package main
 
 import (
 	"archive/zip"
+	"fmt"
 	"io"
-	"log"
 	"net/http"
 	"os"
 	"os/user"
@@ -68,7 +68,7 @@ func downloadZip(url string, path string) (err error) {
 
 	defer resp.Body.Close()
 
-	log.Println(path)
+	fmt.Printf("TLDR archive downloaded to %s\n", path)
 	out, err := os.Create(path)
 	if err != nil {
 		return

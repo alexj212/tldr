@@ -25,6 +25,8 @@ var (
 	GrayString = color.New(color.FgWhite, color.Faint).SprintfFunc()
 	// LeadingSpace predefined string
 	LeadingSpace = strings.Repeat(" ", LeadingSpaceNum)
+	// ErrorOutput predefined string
+	ErrorOutput = color.New(color.FgRed)
 )
 
 func output(page []string) (rendered string) {
@@ -59,6 +61,9 @@ func output(page []string) (rendered string) {
 				}
 			}
 			rendered += "\n"
+		default:
+			// new to add unmatched lines to output
+			rendered += line
 		}
 	}
 	rendered += "\n"
