@@ -1,8 +1,10 @@
 # Test binary, build with `go test -c`
 *.test
-
+.history
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
 .idea
 bin
 go.sum
+go.work
+go.work.sum

@@ -2,32 +2,24 @@ package main
 
 import (
 	"fmt"
-	"runtime"
 )
 
-// GitCommit returns the git commit that was compiled. This will be filled in by the compiler.
-var GitCommit string
+var (
+	// BuildDate date string of when build was performed filled in by -X compile flag
+	BuildDate string
 
-// Version returns the main version number that is being run at the moment.
-var Version = "0.0.0"
+	// LatestCommit date string of when build was performed filled in by -X compile flag
+	LatestCommit string
 
-// GitVersion returns the git repo details iof the build.
-var GitVersion = ""
+	// Version string of build filled in by -X compile flag
+	Version string
 
-// BuildDate returns the date the binary was built
-var BuildDate = ""
+	// GitRepo string of the git repo url when build was performed filled in by -X compile flag
+	GitRepo string
 
-// BuiltOnIP returns the ip the binary was built on
-var BuiltOnIP = ""
-
-// BuiltOnOs returns the os that built the binary
-var BuiltOnOs = ""
-
-// GoVersion returns the version of the go runtime used to compile the binary
-var GoVersion = runtime.Version()
-
-// OsArch returns the os and arch used to build the binary
-var OsArch = fmt.Sprintf("%s %s", runtime.GOOS, runtime.GOARCH)
+	// GitBranch string of branch in the git repo filled in by -X compile flag
+	GitBranch string
+)
 
 func getVersion() string {
 	return fmt.Sprintf("tldr %s", Version)

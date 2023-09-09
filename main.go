@@ -178,8 +178,6 @@ func mainCall(cmd *cobra.Command, args []string) {
 		return
 	}
 
-
-
 	if showBuildInfo {
 		displayBuildInfo()
 		return
@@ -233,8 +231,6 @@ func mainCall(cmd *cobra.Command, args []string) {
 		return
 	}
 
-
-
 	found := false
 	// check custom location first
 	if !hideCustom {
@@ -280,14 +276,11 @@ func mainCall(cmd *cobra.Command, args []string) {
 }
 
 func displayBuildInfo() {
-	fmt.Println("GitCommit  : ", GitCommit)
-	fmt.Println("GitVersion : ", GitVersion)
-	fmt.Println("Version    : ", Version)
-	fmt.Println("BuildDate  : ", BuildDate)
-	fmt.Println("BuiltOnIP  : ", BuiltOnIP)
-	fmt.Println("BuiltOnOs  : ", BuiltOnOs)
-	fmt.Println("GoVersion  : ", GoVersion)
-	fmt.Println("OsArch     : ", OsArch)
+	fmt.Println("BuildDate    : ", BuildDate)
+	fmt.Println("LatestCommit : ", LatestCommit)
+	fmt.Println("Version      : ", Version)
+	fmt.Println("GitRepo      : ", GitRepo)
+	fmt.Println("GitBranch    : ", GitBranch)
 }
 
 func displayCacheInfo() {
@@ -317,13 +310,12 @@ func showAvailableTldrs() {
 
 }
 
-
 func editFile(filename string) {
 
 	var editor string
 
 	switch runtime.GOOS {
-	case  "linux", "darwin":
+	case "linux", "darwin":
 		editor = os.Getenv("EDITOR")
 		if editor == "" {
 			editor = "vi"
